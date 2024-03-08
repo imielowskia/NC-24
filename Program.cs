@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NC_24.Models;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<NC_24Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NC_24Context") ?? throw new InvalidOperationException("Connection string 'NC_24Context' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
