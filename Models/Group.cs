@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using NuGet.Protocol.Plugins;
 
 namespace NC_24.Models
 {
@@ -18,6 +19,13 @@ namespace NC_24.Models
         [Display(Name = "Grupa")]
         public string? Sname { get; set; }
 
+        [Display(Name = "Lista studentów")]
         public virtual ICollection<Student>? Students { get; }
+
+        [ForeignKey("FieldId")]
+        public int? FieldId { get; set; }
+
+        [Display(Name = "Kierunek")]
+        public Field? Field { get; set; }
     }
 }
