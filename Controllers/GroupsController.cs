@@ -81,6 +81,7 @@ namespace NC_24.Controllers
             {
                 return NotFound();
             }
+            ViewData["FieldId"] = new SelectList(_context.Field, "Id", "Name", group.FieldId);
             return View(@group);
         }
 
@@ -89,7 +90,7 @@ namespace NC_24.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Sname")] Group @group)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Sname,FieldId")] Group @group)
         {
             if (id != @group.Id)
             {
@@ -116,6 +117,7 @@ namespace NC_24.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["FieldId"] = new SelectList(_context.Field, "Id", "Name", group.FieldId);
             return View(@group);
         }
 

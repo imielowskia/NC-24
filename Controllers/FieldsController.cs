@@ -21,7 +21,7 @@ namespace NC_24.Controllers
         // GET: Fields
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Field.ToListAsync());
+            return View(await _context.Field.Include(f=>f.Groups).ToListAsync());
         }
 
         // GET: Fields/Details/5
@@ -33,6 +33,7 @@ namespace NC_24.Controllers
             }
 
             var @field = await _context.Field
+                .Include(f => f.Groups)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@field == null)
             {
