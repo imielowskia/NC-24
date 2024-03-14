@@ -21,7 +21,7 @@ namespace NC_24.Controllers
         // GET: Groups
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Group.Include(g=>g.Field).ToListAsync());
+            return View(await _context.Group.Include(g=>g.Field).Include(g=>g.Courses).ToListAsync());
         }
 
         // GET: Groups/Details/5
@@ -35,6 +35,7 @@ namespace NC_24.Controllers
             var @group = await _context.Group
                 .Include(g=>g.Field)
                 .Include(g=>g.Students)
+                .Include(g => g.Courses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
             {
@@ -47,7 +48,7 @@ namespace NC_24.Controllers
         // GET: Groups/Create
         public IActionResult Create()
         {
-            ViewData["FieldId"] = new SelectList(_context.Field, "Id", "Name");
+            ViewData["FieldId"] = new SelectList(_context.Field, "Id", "Name");            
             return View();
         }
 
@@ -82,6 +83,7 @@ namespace NC_24.Controllers
                 return NotFound();
             }
             ViewData["FieldId"] = new SelectList(_context.Field, "Id", "Name", group.FieldId);
+            GetCourseList(id);
             return View(@group);
         }
 
@@ -102,6 +104,15 @@ namespace NC_24.Controllers
                 try
                 {
                     _context.Update(@group);
+                    var SC = HttpContext.Request.Form["selectedCourses"];
+                    var gr = _context.Group.Include(g => g.Courses).Single(g => g.Id == id);
+                    if (gr.Courses != null) { gr.Courses.Clear(); }
+                    foreach (var sc in SC)
+                    {
+                        var course = _context.Course.Single(course => course.Id == int.Parse(sc));
+                        gr.Courses.Add(course);
+                    }
+                    _context.Update(gr);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -118,6 +129,7 @@ namespace NC_24.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FieldId"] = new SelectList(_context.Field, "Id", "Name", group.FieldId);
+            GetCourseList(id);
             return View(@group);
         }
 
@@ -157,6 +169,28 @@ namespace NC_24.Controllers
         private bool GroupExists(int id)
         {
             return _context.Group.Any(e => e.Id == id);
+        }
+
+        //Funkcja tworząca liste kursów
+        private void GetCourseList(int? id)
+        {
+            var Courses = _context.Course.ToList();
+            var Selected = _context.Group.Include(g => g.Courses).Single(g => g.Id == id);
+            var coursestocheck = new List<CGcheck>();
+            var xcheck = "";
+            foreach (var course in Courses)
+            {
+                if (Selected.Courses.Contains(course)) { xcheck = "checked"; };
+                coursestocheck.Add(
+                   new CGcheck
+                   {
+                       CourseId = course.Id,
+                       Name = course.Name,
+                       Checked = xcheck,
+                   }
+                   );
+            }
+            ViewData["courses"] = coursestocheck;
         }
     }
 }

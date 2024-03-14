@@ -28,7 +28,7 @@ namespace NC_24.Models
         [Display(Name = "Kierunek")]
         public Field? Field { get; set; }
 
-        [Display(Name = "Zapisane grupy")]
+        [Display(Name = "Przedmioty")]
         public ICollection<Course>? Courses { get; set; }
     }
 }

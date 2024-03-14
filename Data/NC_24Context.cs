@@ -17,5 +17,6 @@ namespace NC_24.Models
         public DbSet<NC_24.Models.Group> Group { get; set; } = default!;
         public DbSet<NC_24.Models.Student> Student { get; set; } = default!;
         public DbSet<NC_24.Models.Field> Field { get; set; } = default!;
+        public DbSet<NC_24.Models.Course> Course { get; set; } = default!;
     }
 }
