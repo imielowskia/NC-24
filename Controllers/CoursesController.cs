@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -116,6 +117,73 @@ namespace NC_24.Controllers
             return View(course);
         }
 
+
+        //GET: Courses/5/Grade/5        
+        [Route("Courses/{id}/Grade/{groupid}")]
+        public async Task<IActionResult> Grade(int id, int groupid)
+        {
+            var @course = await _context.Course.FindAsync(id);
+            var group = await _context.Group.FindAsync(groupid);
+            GetGradesList(@course, group);
+            ViewData["group"] = group;
+            return View(@course);
+        }
+
+        //GET: Courses/5/SetGrade/5        
+        [Route("Courses/{id}/SetGrade/{groupid}")]
+        public async Task<IActionResult> SetGrade(int id, int groupid)
+        {
+            var @course = await _context.Course.FindAsync(id);
+            var group = await _context.Group.FindAsync(groupid);
+            GetGradesList(@course, group);
+            ViewData["group"] = group;
+            return View(@course);
+        }
+
+
+        // POST: Courses/5/SetGrade/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("Courses/{id}/SetGrade/{groupid}")]
+        public async Task<IActionResult> SetGrade(int id)
+        {
+            var @course = await _context.Course.FindAsync(id);
+            var groupid = int.Parse(HttpContext.Request.Form["groupid"]);
+            var ids = HttpContext.Request.Form["ids"];
+            var grades = HttpContext.Request.Form["oceny"];
+            var i = 0;
+            var xid = 0;
+            foreach ( var studentid in ids ) 
+            {
+                xid = int.Parse(studentid);
+                var xgr = _context.Grade.Where(g => g.StudentId == xid & g.CourseId == id);
+                if (xgr.Any() )
+                {
+                    var ocena = _context.Grade.Where(g => g.StudentId == xid & g.CourseId == id).Single();
+                    ocena.Ocena = decimal.Parse(grades[i]);
+                    _context.Update(ocena);
+                }
+                else
+                {
+                    var grade = new Grade()
+                    {
+                        StudentId = xid,
+                        CourseId = id,
+                        Ocena = decimal.Parse(grades[i])
+                    };
+                    _context.Add(grade);
+                }
+                i++;
+            }
+            await _context.SaveChangesAsync();
+            var group = await _context.Group.FindAsync(groupid);
+            GetGradesList(@course, group);
+            ViewData["group"] = group;
+            return View("Grade", @course);
+
+        }
+
+
         // GET: Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -153,5 +221,29 @@ namespace NC_24.Controllers
         {
             return _context.Course.Any(e => e.Id == id);
         }
-    }
+
+
+        //funkcja budująca listę ocen
+        private async void GetGradesList(Course course, Group group)
+        {            
+            var students = await _context.Student.Where(s => s.GroupId == group.Id).Include(s => s.Grades.Where(g => g.CourseId == course.Id)).ToListAsync();
+            var @grades = new List<StudentGrades>();
+            var xocena = 0.0M;
+            foreach (var student in students)
+            {
+                if (student.Grades.Count() == 1) { xocena = student.Grades.First().Ocena; } else { xocena = 0; }
+                @grades.Add(
+                   new StudentGrades
+                   {
+                       StudentId = student.Id,
+                       IN = student.IN,
+                       Ocena = xocena,
+                   }
+                   );
+            }
+            ViewData["students"] = @grades;
+        }
+
+
+    }    
 }

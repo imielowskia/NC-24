@@ -133,6 +133,7 @@ namespace NC_24.Controllers
             return View(@group);
         }
 
+             
         // GET: Groups/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
