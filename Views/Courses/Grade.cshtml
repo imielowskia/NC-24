@@ -3,18 +3,26 @@
 <h1>Oceny </h1>
 <h2> @Model.Name dla grupy: @ViewBag.group.Name</h2>
 
-@foreach(var student in ViewBag.students)
+<div class="row bg-secondary bg-gradient bg-opacity-10 border-bottom">
+    <div class="col-4">
+        
+    </div>
+    <div class="col-2">
+        <a asp-action="Index" class="btn btn-sm btn-primary">Powrót</a>
+    </div>
+    <div class="col-2">
+        <a asp-action="SetGrade" asp-route-id="@Model.Id" asp-route-groupid="@ViewBag.group.Id" class="btn btn-sm btn-primary">Oceń</a>
+    </div>
+</div>
+
+@foreach(var student in ViewBag.gradelist)
 {
-    <div class="row border-bottom-0 bg-gradient-primary">
+    <div class="row border-bottom bg-gradient bg-primary  bg-opacity-10">
         <div class="col-2">@student.IN</div>
         <div class="col-2">@student.Ocena</div>
     </div>
 }
-<div class="row border-bottom-0 bg-gradient-secondary">
-    <div class="col">
-        <a asp-action="SetGrade" asp-route-id="@Model.Id" asp-route-groupid="@ViewBag.group.Id" class="btn btn-sm btn-primary">Oceń</a>
-    </div>
-</div>
+
 
 
 

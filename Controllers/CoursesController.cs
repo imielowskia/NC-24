@@ -124,7 +124,7 @@ namespace NC_24.Controllers
         {
             var @course = await _context.Course.FindAsync(id);
             var group = await _context.Group.FindAsync(groupid);
-            GetGradesList(@course, group);
+            ViewData["gradelist"] = GetGradesList(@course, group);
             ViewData["group"] = group;
             return View(@course);
         }
@@ -135,7 +135,7 @@ namespace NC_24.Controllers
         {
             var @course = await _context.Course.FindAsync(id);
             var group = await _context.Group.FindAsync(groupid);
-            GetGradesList(@course, group);
+            ViewData["gradelist"] = GetGradesList(@course, group);
             ViewData["group"] = group;
             return View(@course);
         }
@@ -176,11 +176,8 @@ namespace NC_24.Controllers
                 i++;
             }
             await _context.SaveChangesAsync();
-            var group = await _context.Group.FindAsync(groupid);
-            GetGradesList(@course, group);
-            ViewData["group"] = group;
-            return View("Grade", @course);
-
+            var group = await _context.Group.FindAsync(groupid);            
+            return RedirectToAction("Grade", new {id = course.Id, groupid = group.Id });            
         }
 
 
@@ -224,15 +221,22 @@ namespace NC_24.Controllers
 
 
         //funkcja budująca listę ocen
-        private async void GetGradesList(Course course, Group group)
+        private List<StudentGrades> GetGradesList(Course course, Group group)
         {            
-            var students = await _context.Student.Where(s => s.GroupId == group.Id).Include(s => s.Grades.Where(g => g.CourseId == course.Id)).ToListAsync();
-            var @grades = new List<StudentGrades>();
+            var students = _context.Student.Where(s => s.GroupId == group.Id).ToList();
+            var grades = new List<StudentGrades>();
             var xocena = 0.0M;
-            foreach (var student in students)
+            foreach (Student? student in students)
             {
-                if (student.Grades.Count() == 1) { xocena = student.Grades.First().Ocena; } else { xocena = 0; }
-                @grades.Add(
+                if (_context.Grade.Where(g=>g.CourseId==course.Id & g.StudentId == student.Id).Any()) 
+                {
+                    xocena = _context.Grade.Where(g => g.CourseId == course.Id & g.StudentId == student.Id).First().Ocena; 
+                } 
+                else 
+                {
+                    xocena = 0; 
+                }
+                grades.Add(
                    new StudentGrades
                    {
                        StudentId = student.Id,
@@ -241,7 +245,7 @@ namespace NC_24.Controllers
                    }
                    );
             }
-            ViewData["students"] = @grades;
+            return grades;
         }
 
 

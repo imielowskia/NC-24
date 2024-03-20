@@ -4,6 +4,6 @@
     {
         public int StudentId { get; set; }
         public string IN { get; set; }
-        public decimal? Ocena { get; set; }
+        public decimal Ocena { get; set; }
     }
 }
