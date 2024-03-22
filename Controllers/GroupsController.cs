@@ -133,6 +133,14 @@ namespace NC_24.Controllers
             return View(@group);
         }
 
+        [Route("Group/{id}/Attendance/{courseid}")]
+        public async Task<IActionResult> Attendance (int id, int courseid)
+        {
+            var @course = _context.Course.Single(c => c.Id == courseid);
+            var @group = _context.Group.Single(g => g.Id == id);
+
+            return View();
+        }
              
         // GET: Groups/Delete/5
         public async Task<IActionResult> Delete(int? id)

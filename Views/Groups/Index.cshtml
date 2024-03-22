@@ -11,7 +11,7 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
+        <tr class="bg-primary bg-gradient bg-opacity-10">
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -20,7 +20,13 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Field)
-            </th>
+            </th>            
+            <th></th>
+        </tr>
+        <tr class="bg-secondary bg-gradient bg-opacity-10 border-bottom">
+            <th>@Html.DisplayNameFor(model => model.Courses)</th>
+            <th></th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -42,6 +48,16 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+            @foreach(var course in item.Courses)
+            {
+                <tr>
+                    <td>@course.Name</td>
+                    <td></td>
+                    <td>
+                        <a asp-action="Attendace" asp-route-id="@item.Id" asp-route-courseid="@course.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>

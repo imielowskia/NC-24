@@ -19,5 +19,6 @@ namespace NC_24.Models
         public DbSet<NC_24.Models.Field> Field { get; set; } = default!;
         public DbSet<NC_24.Models.Course> Course { get; set; } = default!;
         public DbSet<NC_24.Models.Grade> Grade { get; set; } = default!;
+        public DbSet<NC_24.Models.Attendance> Attendance { get; set; } = default!;
     }
 }

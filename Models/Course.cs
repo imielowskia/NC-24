@@ -27,5 +27,8 @@ namespace NC_24.Models
 
         [Display(Name ="Oceny")]
         public ICollection<Grade>? Grades { get; set;}
+
+        [Display(Name ="Obecności")]
+        public ICollection<Attendance> Attendances { get; set; }
     }
 }

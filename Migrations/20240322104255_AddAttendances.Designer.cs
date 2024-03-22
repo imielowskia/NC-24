@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NC_24.Models;
 
@@ -11,9 +12,11 @@ using NC_24.Models;
 namespace NC_24.Migrations
 {
     [DbContext(typeof(NC_24Context))]
-    partial class NC_24ContextModelSnapshot : ModelSnapshot
+    [Migration("20240322104255_AddAttendances")]
+    partial class AddAttendances
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,9 +53,6 @@ namespace NC_24.Migrations
 
                     b.Property<DateOnly>("Data")
                         .HasColumnType("date");
-
-                    b.Property<bool>("Present")
-                        .HasColumnType("bit");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
@@ -209,13 +209,13 @@ namespace NC_24.Migrations
             modelBuilder.Entity("NC_24.Models.Attendance", b =>
                 {
                     b.HasOne("NC_24.Models.Course", "Course")
-                        .WithMany("Attendances")
+                        .WithMany()
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("NC_24.Models.Student", "Student")
-                        .WithMany("Attendances")
+                        .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -264,8 +264,6 @@ namespace NC_24.Migrations
 
             modelBuilder.Entity("NC_24.Models.Course", b =>
                 {
-                    b.Navigation("Attendances");
-
                     b.Navigation("Grades");
                 });
 
@@ -281,8 +279,6 @@ namespace NC_24.Migrations
 
             modelBuilder.Entity("NC_24.Models.Student", b =>
                 {
-                    b.Navigation("Attendances");
-
                     b.Navigation("Grades");
                 });
 #pragma warning restore 612, 618
